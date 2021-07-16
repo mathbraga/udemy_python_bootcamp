@@ -1,5 +1,3 @@
-from os import system
-
 def display_board(board):
     row1 = f" {board[6]} | {board[7]} | {board[8]} "
     row2 = f" {board[3]} | {board[4]} | {board[5]} "
