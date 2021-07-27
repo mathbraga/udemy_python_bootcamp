@@ -1,3 +1,4 @@
+from milestone_2_warmup import check_winner
 import random
 
 suits = ("Hearts", "Spades", "Diamonds", "Clubs")
@@ -40,6 +41,12 @@ class Dealer():
     def add_hand(self, card):
         self.hand.append(card)
         self.power += card.value
+        if self.power > 21:
+            self.power = 0
+            for c in self.hand:
+                if c.rank == "Ace":
+                    c.value = 1
+                self.power += c.value
 
     def clear_hand(self):
         self.hand = []
@@ -74,6 +81,7 @@ dealer.shuffle()
 game_is_active = False
 round_is_active = False
 player_bid = 0
+round_count = 0
 
 print("Welcome to BlackJack!")
 answer = input("Do you wish to play? (y|n) ").lower()
@@ -87,33 +95,44 @@ else:
 
 while game_is_active:
     print("What do you wish to do?")
-    print("1 - Bet")
-    print("2 - Increase my balance")
-    print("3 - Exit")
+    print("1 - Show balance")
+    print("2 - Bet")
+    print("3 - Increase my balance")
+    print("4 - Exit")
     option = int(input("Your choice: "))
+
     if option == 1:
+        print("Your balance is ", player.balance)
+        continue
+
+    elif option == 2:
         player_bet = int(input("What is your bet: "))
         if player.bet(player_bet):
             print("Your balance now is", player.balance)
             round_is_active = True
 
-    elif option == 2:
+    elif option == 3:
         player.balance += int(input("Insert value to add: "))
         print("Your current balance is:", player.balance)
+        continue
 
-    elif option == 3:
+    elif option == 4:
         print("Thank you for playing.")
         game_is_active = False
+        break
+
+    
+    print("Round start.")
+    print("Your bet is", player_bet)
+    print("Dealer deals the cards")
+
+    player.add_hand(dealer.deal_one())
+    d_facedown = dealer.deal_one()
+    player.add_hand(dealer.deal_one())
+    dealer.add_hand(dealer.deal_one())
 
     while round_is_active:
-        print("Round start.")
-        print("Your bet is", player_bet)
-        print("Dealer deals the cards")
-
-        player.add_hand(dealer.deal_one())
-        d_facedown = dealer.deal_one()
-        player.add_hand(dealer.deal_one())
-        dealer.add_hand(dealer.deal_one())
+        round_count += 1
 
         print("Your hand is:")
         for card in player.hand:
@@ -124,7 +143,39 @@ while game_is_active:
         print("Dealer hand is:")
         for card in dealer.hand:
             print(card)
+        if round_count == 1:
+            print("And a facedown card.")
         print("Power:", dealer.power)
         print("-------------------")
 
-        round_is_active = False
+        if player.power == 21 and round_count == 1:
+            dealer.add_hand(d_facedown)
+            print("Dealer facedown card is:", d_facedown)
+            print("Dealer power is:", dealer.power)
+            print("-------------------")
+            if dealer.power == 21:
+                print("It's a BlackJack tie.")
+                print("Bet will be refounded.")
+                player.balance += player_bet
+            else:
+                print("BlackJack! Congratulations.")
+                print("You win 2x your bet:", player_bet*2)
+                player.balance += player_bet*2
+
+            dealer.reset_deck(player.hand + dealer.hand)
+            player.clear_hand()
+            dealer.clear_hand()
+            round_is_active = False
+            break
+        elif player.power == 21:
+            pass
+
+        print("What do you wish to do?")
+        print("1 - Hit")
+        print("2 - Stand")
+        option = int(input("Your choice: "))
+
+        if option == 1:
+            player.add_hand(dealer.deal_one())
+        elif option == 2:
+            print("Stand")
