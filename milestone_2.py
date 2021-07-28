@@ -52,6 +52,9 @@ class Dealer():
         self.power = 0
 
     def reset_deck(self, pile):
+        for c in pile:
+            if c.rank == "Ace":
+                c.value = 11
         self.deck += pile
 
 
