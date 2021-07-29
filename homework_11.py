@@ -23,7 +23,7 @@ for c in s_iter:
     print(c)
 
 # Explain a use case for a generator using a yield statement where you would not want to use a normal function with a return statement.
-# R: In the case where you don't want to occupy memory space when generating a sequence, because you would have to create a list to store this sequence.
+# R: In the case where you don't want to occupy so much memory space when generating a sequence, because you would have to create a list to store this sequence.
 
 # Can you explain what gencomp is in the code below? (Note: We never covered this in lecture! You will have to do some Googling/Stack Overflowing!)
 
@@ -34,4 +34,4 @@ for c in s_iter:
 # for item in gencomp:
 #     print(item)
 
-# R: gencomp is the result from the for loop, which is filtering through the list and returning only integers greater than 3.
+# R: By using parenthesis instead of square brackets, gencomp is a generator and won't occupy as much memory as a list.
